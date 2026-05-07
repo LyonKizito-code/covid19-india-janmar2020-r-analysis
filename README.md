@@ -159,9 +159,11 @@ To rerun the analysis:
 3. Download the CSV from Kaggle (Jan–Mar 2020 India COVID dataset) and update the file path in the script.
 4. Run the commands in `scripts/01_covid_india_exploration.R` or copy-paste from the README into your R session.
 
-## Possible extensions
+## Next steps / possible extensions
 
-- Aggregate cases per state and compute total confirmed / recovered / deaths over the period.
+In future iterations of this project, I plan to:
+
+- Aggregate cases per state and compute total confirmed, recovered, and deaths over the period.
 - Plot an early epidemic curve by date using base R or ggplot2.
-- Compare recovery frequencies by state.
-- Extend the dataset beyond March 2020 for trend analysis.
+- Compare recovery frequencies by state (e.g. proportion of state–day reports with at least one recovery).
+- Extend the dataset beyond March 2020 for longer-term trend analysis.
