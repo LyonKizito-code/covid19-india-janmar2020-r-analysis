@@ -1,6 +1,6 @@
 # COVID-19 India (Jan–Mar 2020) – R Exploratory Analysis
 
-This repository contains an exploratory analysis of early COVID‑19 cases in India (January–March 2020) using a small state‑wise daily dataset. The focus is on **descriptive statistics**, **date handling**, and **frequency analysis of recoveries** using base R and the readr package.
+This repository contains an exploratory analysis of early COVID‑19 cases in India (January–March 2020) using a small state‑wise daily dataset. The focus is on **descriptive statistics**, **date handling**, and **frequency analysis of recoveries and deaths** using base R and the readr/dplyr packages.
 
 ## Dataset
 
@@ -122,7 +122,113 @@ recovery_percent
 
 Interpretation:
 
-> In this early Jan–Mar 2020 window, only about one in five state‑level daily reports in India included recovery cases, while roughly four out of five reported zero recoveries. This reflects the very early epidemic stage: many cases were still active and recoveries were relatively rare.
+> In this early Jan–Mar 2020 window, only about one in five state‑level daily reports in India included recovery cases, while roughly four out of five reported zero recoveries.
+
+### 5. Frequency analysis of deaths
+
+Goal: mirror the recovery analysis for death reporting.
+
+#### 5.1 Binary and factor variables for deaths
+
+```r
+# Binary indicator: any deaths on a state–day
+Covid$has_deaths <- ifelse(Covid$Deaths > 0, 1, 0)
+
+death_freq <- table(Covid$has_deaths)
+death_freq
+
+# Labeled factor version for readability
+Covid$has_deaths_factor <- factor(
+  Covid$has_deaths,
+  levels = c(0, 1),
+  labels = c("No Deaths", "Deaths Reported")
+)
+
+table(Covid$has_deaths_factor)
+```
+
+**Results:**
+
+- Counts:
+  - `No Deaths`: 245 state–day reports
+  - `Deaths Reported`: 25 state–day reports
+
+Interpretation:
+
+> Deaths were even less frequently reported than recoveries in this early period; only about 25 out of 270 state–day reports contained at least one death.
+
+### 6. Case severity categories (`case_level`)
+
+Goal: classify each state–day into four levels based on total confirmed cases (Indian + foreign nationals):
+
+- No Cases = 0 cases
+- Low Cases = 1–5 cases
+- Medium Cases = 6–15 cases
+- High Cases = 16+ cases
+
+#### 6.1 Total confirmed cases per row
+
+```r
+Covid$total_confirmed <- Covid$ConfirmedIndianNational + Covid$ConfirmedForeignNational
+```
+
+> Note: the script uses row‑wise addition; the console experiment using `sum(ConfirmedIndianNational, ConfirmedForeignNational)` produced a single large total and is not used for `case_level`.
+
+#### 6.2 Create `case_level` using dplyr + case_when
+
+```r
+library(dplyr)
+
+Covid <- Covid |>
+  mutate(
+    case_level = case_when(
+      total_confirmed == 0                          ~ "No Cases",
+      total_confirmed >= 1 & total_confirmed <= 5   ~ "Low Cases",
+      total_confirmed >= 6 & total_confirmed <= 15  ~ "Medium Cases",
+      total_confirmed > 15                          ~ "High Cases"
+    )
+  )
+
+table(Covid$case_level)
+head(Covid[, c("Date", "State/UnionTerritory", "total_confirmed", "case_level")])
+```
+
+**Findings (using the correct row‑wise `total_confirmed`):**
+
+- Most early reports fall into the "No Cases" or "Low Cases" categories, with only a small subset reaching "Medium" or "High" case counts per state–day.
+- The console experiment where `total_confirmed` was defined as a single grand total (summing both confirmed columns) resulted in all rows being labeled "High Cases"; this is kept in the history as a useful contrast showing why row‑wise calculations are important.
+
+### 7. State reporting frequency and top 10 states
+
+Using the state/UT field:
+
+```r
+state_freq <- table(Covid$`State/UnionTerritory`)
+state_freq
+
+state_freq_sorted <- sort(state_freq, decreasing = TRUE)
+top10_states <- head(state_freq_sorted, 10)
+
+state_freq_sorted
+top10_states
+```
+
+**Findings:**
+
+- Kerala has the highest number of state–day reports (52 rows), followed by Delhi and Telengana (20 each), Rajasthan (19), Haryana and Uttar Pradesh (18 each), and several other highly reported states such as Tamil Nadu, Union Territory of Ladakh, Karnataka, and Maharashtra.
+- The **top 10 most frequently reported states/UTs** in this early dataset are:
+  - Kerala
+  - Delhi
+  - Telengana
+  - Rajasthan
+  - Haryana
+  - Uttar Pradesh
+  - Tamil Nadu
+  - Union Territory of Ladakh
+  - Karnataka
+  - Maharashtra
+
+These frequencies reflect where early surveillance and reporting activity was most dense.
 
 ## Additional R practice (Week 2 context)
 
@@ -150,13 +256,14 @@ These exercises support the main COVID analysis by reinforcing data structures, 
 To rerun the analysis:
 
 1. Install R (4.6.0 or later) and RStudio.
-2. Install required package:
+2. Install required packages:
 
    ```r
    install.packages("readr")
+   install.packages("dplyr")
    ```
 
-3. Download the CSV from Kaggle (Jan–Mar 2020 India COVID dataset) and update the file path in the script.
+3. Download the CSV from Kaggle (Jan–Mar 2020 India COVID dataset) and update the file path in `scripts/01_covid_india_exploration.R`.
 4. Run the commands in `scripts/01_covid_india_exploration.R` or copy-paste from the README into your R session.
 
 ## Next steps / possible extensions
@@ -165,5 +272,5 @@ In future iterations of this project, I plan to:
 
 - Aggregate cases per state and compute total confirmed, recovered, and deaths over the period.
 - Plot an early epidemic curve by date using base R or ggplot2.
-- Compare recovery frequencies by state (e.g. proportion of state–day reports with at least one recovery).
+- Compare recovery and death frequencies by state (e.g. proportion of state–day reports with at least one recovery or death).
 - Extend the dataset beyond March 2020 for longer-term trend analysis.

@@ -54,3 +54,54 @@ recovery_prop <- prop.table(recovery_freq)
 recovery_prop
 
 round(recovery_prop * 100, 1)    # percentages
+
+# 6. Frequency analysis of deaths
+
+# Binary indicator: has_deaths = 1 if Deaths > 0, else 0
+Covid$has_deaths <- ifelse(Covid$Deaths > 0, 1, 0)
+
+death_freq <- table(Covid$has_deaths)
+death_freq
+
+# Factor version with labels
+Covid$has_deaths_factor <- factor(
+  Covid$has_deaths,
+  levels = c(0, 1),
+  labels = c("No Deaths", "Deaths Reported")
+)
+
+table(Covid$has_deaths_factor)
+
+# 7. Total confirmed cases and case level categories
+
+# Row-wise total confirmed cases (Indian + foreign nationals)
+Covid$total_confirmed <- Covid$ConfirmedIndianNational + Covid$ConfirmedForeignNational
+
+# Create categorical case_level using dplyr::mutate() and case_when()
+library(dplyr)
+
+Covid <- Covid |>
+  mutate(
+    case_level = case_when(
+      total_confirmed == 0                          ~ "No Cases",
+      total_confirmed >= 1 & total_confirmed <= 5   ~ "Low Cases",
+      total_confirmed >= 6 & total_confirmed <= 15  ~ "Medium Cases",
+      total_confirmed > 15                          ~ "High Cases"
+    )
+  )
+
+# Inspect distribution and a few rows
+
+table(Covid$case_level)
+head(Covid[, c("Date", "State/UnionTerritory", "total_confirmed", "case_level")])
+
+# 8. State reporting frequency and top 10 states
+
+state_freq <- table(Covid$`State/UnionTerritory`)
+state_freq
+
+state_freq_sorted <- sort(state_freq, decreasing = TRUE)
+state_freq_sorted
+
+top10_states <- head(state_freq_sorted, 10)
+top10_states
