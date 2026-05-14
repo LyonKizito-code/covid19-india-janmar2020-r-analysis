@@ -1,6 +1,6 @@
 # COVID-19 India (Jan–Mar 2020) – R Exploratory Analysis
 
-This repository contains an exploratory analysis of early COVID‑19 cases in India (January–March 2020) using a small state‑wise daily dataset. The focus is on **descriptive statistics**, **date handling**, and **frequency analysis of recoveries and deaths** using base R and the readr/dplyr packages.
+This repository contains an exploratory analysis of early COVID‑19 cases in India (January–March 2020) using a small state‑wise daily dataset. The focus is on **descriptive statistics**, **date handling**, and **frequency analysis of recoveries, deaths, and case severity levels** using base R and the readr/dplyr packages.
 
 ## Dataset
 
@@ -172,7 +172,7 @@ Goal: classify each state–day into four levels based on total confirmed cases 
 Covid$total_confirmed <- Covid$ConfirmedIndianNational + Covid$ConfirmedForeignNational
 ```
 
-> Note: the script uses row‑wise addition; the console experiment using `sum(ConfirmedIndianNational, ConfirmedForeignNational)` produced a single large total and is not used for `case_level`.
+This is a **row‑wise** calculation: for each state–day, `total_confirmed` is the sum of Indian and foreign confirmed cases on that date in that state.
 
 #### 6.2 Create `case_level` using dplyr + case_when
 
@@ -193,10 +193,24 @@ table(Covid$case_level)
 head(Covid[, c("Date", "State/UnionTerritory", "total_confirmed", "case_level")])
 ```
 
-**Findings (using the correct row‑wise `total_confirmed`):**
+**Results:**
 
-- Most early reports fall into the "No Cases" or "Low Cases" categories, with only a small subset reaching "Medium" or "High" case counts per state–day.
-- The console experiment where `total_confirmed` was defined as a single grand total (summing both confirmed columns) resulted in all rows being labeled "High Cases"; this is kept in the history as a useful contrast showing why row‑wise calculations are important.
+From `table(Covid$case_level)`:
+
+- `Low Cases`: 177 state–day reports
+- `Medium Cases`: 61 state–day reports
+- `High Cases`: 32 state–day reports
+- `No Cases`: 0 state–day reports
+
+This corresponds to approximately:
+
+- Low Cases: ~65.6%
+- Medium Cases: ~22.6%
+- High Cases: ~11.9%
+
+Interpretation:
+
+> Using a row‑wise total of confirmed cases, about two‑thirds of state‑day reports fall into the “Low Cases” category (1–5 cases), roughly one‑fifth into “Medium Cases” (6–15), and a smaller share into “High Cases” (16+), with no records classified as “No Cases” in this early dataset. This reflects that most states had relatively low case counts per day in the initial phase of the outbreak, with fewer days reaching higher loads.
 
 ### 7. State reporting frequency and top 10 states
 
@@ -213,22 +227,34 @@ state_freq_sorted
 top10_states
 ```
 
-**Findings:**
+**Results:**
 
-- Kerala has the highest number of state–day reports (52 rows), followed by Delhi and Telengana (20 each), Rajasthan (19), Haryana and Uttar Pradesh (18 each), and several other highly reported states such as Tamil Nadu, Union Territory of Ladakh, Karnataka, and Maharashtra.
-- The **top 10 most frequently reported states/UTs** in this early dataset are:
-  - Kerala
-  - Delhi
-  - Telengana
-  - Rajasthan
-  - Haryana
-  - Uttar Pradesh
-  - Tamil Nadu
-  - Union Territory of Ladakh
-  - Karnataka
-  - Maharashtra
+The sorted frequency table shows that:
 
-These frequencies reflect where early surveillance and reporting activity was most dense.
+- Kerala has 52 state–day reports.
+- Delhi and Telengana have 20 reports each.
+- Rajasthan has 19.
+- Haryana and Uttar Pradesh have 18 each.
+- Tamil Nadu has 15.
+- Union Territory of Ladakh has 14.
+- Karnataka and Maharashtra have 13 each.
+
+**Top 10 most frequently reported states/UTs:**
+
+- Kerala
+- Delhi
+- Telengana
+- Rajasthan
+- Haryana
+- Uttar Pradesh
+- Tamil Nadu
+- Union Territory of Ladakh
+- Karnataka
+- Maharashtra
+
+Interpretation:
+
+> Kerala appears most frequently in this early dataset, followed by a cluster of other states and union territories with high reporting counts. This pattern highlights where early surveillance and reporting activity was most dense between late January and late March 2020.
 
 ## Additional R practice (Week 2 context)
 
