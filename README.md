@@ -1,6 +1,6 @@
 # COVID-19 India (Jan–Mar 2020) – R Exploratory Analysis
 
-This repository contains an exploratory analysis of early COVID‑19 cases in India (January–March 2020) using a small state‑wise daily dataset. The focus is on **descriptive statistics**, **date handling**, and **frequency analysis of recoveries, deaths, and case severity levels** using base R and the readr/dplyr packages.
+This repository contains an exploratory analysis of early COVID‑19 cases in India (January–March 2020) using a small state‑wise daily dataset. The focus is on **descriptive statistics**, **date handling**, **frequency analysis of recoveries, deaths, and case severity levels**, and **basic visualisation** using base R and the readr/dplyr packages.
 
 ## Dataset
 
@@ -255,6 +255,66 @@ The sorted frequency table shows that:
 Interpretation:
 
 > Kerala appears most frequently in this early dataset, followed by a cluster of other states and union territories with high reporting counts. This pattern highlights where early surveillance and reporting activity was most dense between late January and late March 2020.
+
+### 8. Visualisations (Data Activity 4)
+
+#### 8.1 State reporting frequency bar chart
+
+```r
+state_freq <- table(Covid$`State/UnionTerritory`)
+
+barplot(state_freq,
+        las = 2,
+        col = "steelblue",
+        main = "Frequency of COVID-19 Reports by State/UT",
+        xlab = "State / Union Territory",
+        ylab = "Number of state-day reports")
+```
+
+![Bar chart of report frequency by state/UT](plots/BarChart.jpg)
+
+#### 8.2 Case severity pie chart
+
+```r
+case_freq <- table(Covid$case_level)
+
+pie(case_freq,
+    main = "Distribution of Case Severity Levels",
+    col = c("gray80", "lightblue", "orange", "red"))
+```
+
+![Pie chart of case severity levels](plots/Pie-Chart.jpg)
+
+#### 8.3 Histogram of recovery numbers
+
+```r
+hist(Covid$Cured,
+     main = "Distribution of Recovery Numbers (Cured)",
+     xlab = "Number of recoveries on a state-day",
+     ylab = "Frequency",
+     col = "lightgreen",
+     border = "darkgreen")
+```
+
+![Histogram of recovery counts per state-day](plots/Histogram.jpg)
+
+#### 8.4 Line chart of total confirmed cases over time
+
+```r
+Covid$total_confirmed <- Covid$ConfirmedIndianNational + Covid$ConfirmedForeignNational
+
+total_by_date <- aggregate(total_confirmed ~ Date, data = Covid, sum)
+
+plot(total_by_date$Date, total_by_date$total_confirmed,
+     type = "l",
+     col = "blue",
+     lwd = 2,
+     main = "Trend of Total Confirmed Cases Over Time",
+     xlab = "Date",
+     ylab = "Total confirmed cases (all states combined)")
+```
+
+![Line chart of total confirmed cases over time](plots/Line-Chart.jpg)
 
 ## Additional R practice (Week 2 context)
 
