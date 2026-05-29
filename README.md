@@ -1,10 +1,10 @@
 # COVID-19 India (Jan–Mar 2020) – R Exploratory Analysis
 
-This repository contains an exploratory analysis of early COVID‑19 cases in India (January–March 2020) using a small state‑wise daily dataset. The focus is on **descriptive statistics**, **date handling**, **frequency analysis**, and **basic visualisation** using base R plus readr/dplyr.
+This repository contains an exploratory analysis of early COVID‑19 cases in India (January–March 2020) using a small state‑wise daily dataset. The focus is on **descriptive statistics**, **date handling**, and **frequency analysis of recoveries, deaths, and case severity levels** using base R and the readr/dplyr packages.
 
 ## Dataset
 
-- Source: Kaggle – "A Small COVID-19 Dataset" (Indian states, Jan–Mar 2020).
+- Source: Kaggle – "COVID-19 India Dataset (January 2020 - March 2020)" (small subset of early reports).
 - Structure: 270 rows × 7 columns (state–date level reports):
   - `Sno`: serial number (numeric)
   - `Date`: report date (character converted to Date)
@@ -118,7 +118,11 @@ recovery_percent
   - `has_recovery = 1`: 55 state–day reports
 - Percentages:
   - No recoveries: ~79.6% of reports
-  - At least one recovery: ~20.4% of reports.
+  - At least one recovery: ~20.4% of reports
+
+Interpretation:
+
+> In this early Jan–Mar 2020 window, only about one in five state‑level daily reports in India included recovery cases, while roughly four out of five reported zero recoveries.
 
 ### 5. Frequency analysis of deaths
 
@@ -147,7 +151,11 @@ table(Covid$has_deaths_factor)
 
 - Counts:
   - `No Deaths`: 245 state–day reports
-  - `Deaths Reported`: 25 state–day reports.
+  - `Deaths Reported`: 25 state–day reports
+
+Interpretation:
+
+> Deaths were even less frequently reported than recoveries in this early period; only about 25 out of 270 state–day reports contained at least one death.
 
 ### 6. Case severity categories (`case_level`)
 
@@ -156,7 +164,7 @@ Goal: classify each state–day into four levels based on total confirmed cases 
 - No Cases = 0 cases
 - Low Cases = 1–5 cases
 - Medium Cases = 6–15 cases
-- High Cases = 16+ cases.
+- High Cases = 16+ cases
 
 #### 6.1 Total confirmed cases per row
 
@@ -182,90 +190,113 @@ Covid <- Covid |>
   )
 
 table(Covid$case_level)
+head(Covid[, c("Date", "State/UnionTerritory", "total_confirmed", "case_level")])
 ```
 
 **Results:**
 
-- `Low Cases`: 177 state–day reports (~65.6%).
-- `Medium Cases`: 61 state–day reports (~22.6%).
-- `High Cases`: 32 state–day reports (~11.9%).
-- `No Cases`: 0 state–day reports.
+From `table(Covid$case_level)`:
 
-### 7. State reporting frequency bar chart
+- `Low Cases`: 177 state–day reports
+- `Medium Cases`: 61 state–day reports
+- `High Cases`: 32 state–day reports
+- `No Cases`: 0 state–day reports
 
-Using the state/UT field, a bar chart was drawn from the frequency table `state_freq`:
+This corresponds to approximately:
 
-```r
-state_freq <- table(Covid$`State/UnionTerritory`)
+- Low Cases: ~65.6%
+- Medium Cases: ~22.6%
+- High Cases: ~11.9%
 
-barplot(state_freq,
-        las = 2,
-        col = "steelblue",
-        main = "Frequency of COVID-19 Reports by State/UT",
-        xlab = "State / Union Territory",
-        ylab = "Number of state-day reports")
-```
+Interpretation:
 
-![Bar chart of report frequency by state/UT](plots/BarChart.jpg)
+> Using a row‑wise total of confirmed cases, about two‑thirds of state‑day reports fall into the “Low Cases” category (1–5 cases), roughly one‑fifth into “Medium Cases” (6–15), and a smaller share into “High Cases” (16+), with no records classified as “No Cases” in this early dataset. This reflects that most states had relatively low case counts per day in the initial phase of the outbreak, with fewer days reaching higher loads.
 
-### 8. Case severity pie chart
+### 7. State reporting frequency and top 10 states
 
-The `case_level` variable was summarised with a pie chart:
-
-```r
-case_freq <- table(Covid$case_level)
-
-pie(case_freq,
-    main = "Distribution of Case Severity Levels",
-    col = c("gray80", "lightblue", "orange", "red"))
-```
-
-![Pie chart of case severity levels](plots/Pie-Chart.jpg)
-
-### 9. Histogram of recovery numbers
-
-The distribution of the `Cured` variable was explored with a histogram:
-
-```r
-hist(Covid$Cured,
-     main = "Distribution of Recovery Numbers (Cured)",
-     xlab = "Number of recoveries on a state-day",
-     ylab = "Frequency",
-     col = "lightgreen",
-     border = "darkgreen")
-```
-
-![Histogram of recovery counts per state-day](plots/Histogram.jpg)
-
-### 10. Line chart of total confirmed cases over time
-
-Total confirmed cases across all states were aggregated by date and plotted as a time series:
-
-```r
-Covid$total_confirmed <- Covid$ConfirmedIndianNational + Covid$ConfirmedForeignNational
-
-total_by_date <- aggregate(total_confirmed ~ Date, data = Covid, sum)
-
-plot(total_by_date$Date, total_by_date$total_confirmed,
-     type = "l",
-     col = "blue",
-     lwd = 2,
-     main = "Trend of Total Confirmed Cases Over Time",
-     xlab = "Date",
-     ylab = "Total confirmed cases (all states combined)")
-```
-
-![Line chart of total confirmed cases over time](plots/Line-Chart.jpg)
-
-### 11. State reporting frequency and top 10 states
-
-Using the same frequency table:
+Using the state/UT field:
 
 ```r
 state_freq <- table(Covid$`State/UnionTerritory`)
+state_freq
+
 state_freq_sorted <- sort(state_freq, decreasing = TRUE)
 top10_states <- head(state_freq_sorted, 10)
 
 state_freq_sorted
 top10_states
 ```
+
+**Results:**
+
+The sorted frequency table shows that:
+
+- Kerala has 52 state–day reports.
+- Delhi and Telengana have 20 reports each.
+- Rajasthan has 19.
+- Haryana and Uttar Pradesh have 18 each.
+- Tamil Nadu has 15.
+- Union Territory of Ladakh has 14.
+- Karnataka and Maharashtra have 13 each.
+
+**Top 10 most frequently reported states/UTs:**
+
+- Kerala
+- Delhi
+- Telengana
+- Rajasthan
+- Haryana
+- Uttar Pradesh
+- Tamil Nadu
+- Union Territory of Ladakh
+- Karnataka
+- Maharashtra
+
+Interpretation:
+
+> Kerala appears most frequently in this early dataset, followed by a cluster of other states and union territories with high reporting counts. This pattern highlights where early surveillance and reporting activity was most dense between late January and late March 2020.
+
+## Additional R practice (Week 2 context)
+
+In the same session, some core R concepts were practiced on small toy examples:
+
+- **Vectors and operations**: creating numeric vectors, checking type (`is.vector`, `class`, `str`, `length`), and performing arithmetic.
+- **Matrices**: building a matrix with `seq()` and `matrix()`, indexing elements, and using `which(..., arr.ind = TRUE)` to find positions.
+- **Random sampling**: using `sample()` to generate random integers and `runif()` + `floor()` for uniform random numbers.
+- **Apply family**:
+  - `apply(students[, c("english", "math")], 1, sum)` for row‑wise totals.
+  - `lapply(students, sum)` and `sapply(students, sum)` for column‑wise summaries.
+- **Factors**: creating labeled categorical variables with `factor()`:
+
+  ```r
+  gender <- c(1, 2, 1, 2, 2, 2, 1, 2)
+  fac_gender <- factor(gender,
+                       levels = c(1, 2),
+                       labels = c("Male", "Female"))
+  ```
+
+These exercises support the main COVID analysis by reinforcing data structures, indexing, and summarisation skills.
+
+## Reproducibility notes
+
+To rerun the analysis:
+
+1. Install R (4.6.0 or later) and RStudio.
+2. Install required packages:
+
+   ```r
+   install.packages("readr")
+   install.packages("dplyr")
+   ```
+
+3. Download the CSV from Kaggle (Jan–Mar 2020 India COVID dataset) and update the file path in `scripts/01_covid_india_exploration.R`.
+4. Run the commands in `scripts/01_covid_india_exploration.R` or copy-paste from the README into your R session.
+
+## Next steps / possible extensions
+
+In future iterations of this project, I plan to:
+
+- Aggregate cases per state and compute total confirmed, recovered, and deaths over the period.
+- Plot an early epidemic curve by date using base R or ggplot2.
+- Compare recovery and death frequencies by state (e.g. proportion of state–day reports with at least one recovery or death).
+- Extend the dataset beyond March 2020 for longer-term trend analysis.
