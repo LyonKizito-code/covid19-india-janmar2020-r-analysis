@@ -210,7 +210,7 @@ This corresponds to approximately:
 
 Interpretation:
 
-> Using a row‑wise total of confirmed cases, about two‑thirds of state‑day reports fall into the “Low Cases” category (1–5 cases), roughly one‑fifth into “Medium Cases” (6–15), and a smaller share into “High Cases” (16+), with no records classified as “No Cases” in this early dataset. This reflects that most states had relatively low case counts per day in the initial phase of the outbreak, with fewer days reaching higher loads.
+> Using a row‑wise total of confirmed cases, about two‑thirds of state–day reports fall into the “Low Cases” category (1–5 cases), roughly one‑fifth into “Medium Cases” (6–15), and a smaller share into “High Cases” (16+), with no records classified as “No Cases” in this early dataset. This reflects that most states had relatively low case counts per day in the initial phase of the outbreak, with fewer days reaching higher loads.
 
 ### 7. State reporting frequency bar chart
 
@@ -227,13 +227,15 @@ barplot(state_freq,
         ylab = "Number of state-day reports")
 ```
 
+![Bar chart of report frequency by state/UT](plots/BarChart.jpg)
+
 **Visual findings (bar chart):**
 
 - Kerala has the highest number of state–day reports (around 52), standing out clearly above all other states.
 - Delhi and Telengana form the next tier of reporting frequency, followed by Rajasthan, Haryana and Uttar Pradesh.
 - Several smaller bars represent states/UTs with only a handful of reports in this early period.
 
-This bar chart confirms the earlier table‑based result that Kerala dominates early reporting, with a long tail of states that appear less often.
+This bar chart confirms the earlier table‑based result that Kerala dominates early reporting, with a long tail of states that appear less often. [file:307]
 
 ### 8. Case severity pie chart
 
@@ -246,6 +248,8 @@ pie(case_freq,
     main = "Distribution of Case Severity Levels",
     col = c("gray80", "lightblue", "orange", "red"))
 ```
+
+![Pie chart of case severity levels](plots/Pie-Chart.jpg)
 
 **Visual findings (pie chart):**
 
@@ -267,6 +271,8 @@ hist(Covid$Cured,
      col = "lightgreen",
      border = "darkgreen")
 ```
+
+![Histogram of recovery counts per state-day](plots/Histogram.jpg)
 
 **Visual findings (histogram):**
 
@@ -293,6 +299,8 @@ plot(total_by_date$Date, total_by_date$total_confirmed,
      xlab = "Date",
      ylab = "Total confirmed cases (all states combined)")
 ```
+
+![Line chart of total confirmed cases over time](plots/Line-Chart.jpg)
 
 **Visual findings (line chart):**
 
