@@ -271,7 +271,7 @@ barplot(state_freq,
         ylab = "Number of state-day reports")
 ```
 
-![Bar chart of report frequency by state/UT](plots/BarChart.jpg)
+![Bar chart of report frequency by state/UT](plots/BarChart.png)
 
 #### 8.2 Case severity pie chart
 
@@ -283,7 +283,7 @@ pie(case_freq,
     col = c("gray80", "lightblue", "orange", "red"))
 ```
 
-![Pie chart of case severity levels](plots/Pie-Chart.jpg)
+![Pie chart of case severity levels](plots/PieChart.png)
 
 #### 8.3 Histogram of recovery numbers
 
@@ -296,7 +296,7 @@ hist(Covid$Cured,
      border = "darkgreen")
 ```
 
-![Histogram of recovery counts per state-day](plots/Histogram.jpg)
+![Histogram of recovery counts per state-day](plots/Histogram.png)
 
 #### 8.4 Line chart of total confirmed cases over time
 
@@ -314,7 +314,7 @@ plot(total_by_date$Date, total_by_date$total_confirmed,
      ylab = "Total confirmed cases (all states combined)")
 ```
 
-![Line chart of total confirmed cases over time](plots/Line-Chart.jpg)
+![Line chart of total confirmed cases over time](plots/LineChart.png)
 
 ## Additional R practice (Week 2 context)
 
