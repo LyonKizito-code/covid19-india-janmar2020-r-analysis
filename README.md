@@ -273,6 +273,15 @@ barplot(state_freq,
 
 ![Bar chart of report frequency by state/UT](plots/BarChart.png)
 
+**Visual findings (bar chart):**
+
+- Kerala has the highest number of state–day reports (around 52), standing out clearly above all other states.
+- Delhi and Telengana form the next tier of reporting frequency, followed by Rajasthan, Haryana and Uttar Pradesh.
+- Several smaller bars represent states/UTs with only a handful of reports in this early period.
+
+This bar chart confirms the earlier table‑based result that Kerala dominates early reporting, with a long tail of states that appear less often.
+
+
 #### 8.2 Case severity pie chart
 
 ```r
@@ -284,6 +293,15 @@ pie(case_freq,
 ```
 
 ![Pie chart of case severity levels](plots/PieChart.png)
+
+**Visual findings (pie chart):**
+
+- The Low Cases slice occupies most of the pie, visually reinforcing that the majority of state–day reports involve only 1–5 cases.
+- Medium Cases form a substantial but smaller segment.
+- High Cases are the smallest slice, indicating relatively few days with 16+ cases in a single state.
+
+The pie chart is consistent with the numeric proportions computed earlier and gives a quick visual summary of how rare high‑load days were in this period.
+
 
 #### 8.3 Histogram of recovery numbers
 
@@ -297,6 +315,14 @@ hist(Covid$Cured,
 ```
 
 ![Histogram of recovery counts per state-day](plots/Histogram.png)
+
+**Visual findings (histogram):**
+
+- The first bar at 0 dominates the histogram, showing that most state–day reports have zero recoveries.
+- A few bars at small positive values (around 1–3) show that when recoveries occur, they are usually in very small numbers.
+- Only very rare state–days have larger recovery counts (e.g. 5+), appearing as tiny bars on the right of the plot.
+
+This matches the earlier frequency analysis where roughly 80% of state–days had no recoveries at all.
 
 #### 8.4 Line chart of total confirmed cases over time
 
@@ -315,6 +341,14 @@ plot(total_by_date$Date, total_by_date$total_confirmed,
 ```
 
 ![Line chart of total confirmed cases over time](plots/LineChart.png)
+
+**Visual findings (line chart):**
+
+- The line stays near zero through late January and February, reflecting very few reported cases in the earliest weeks.
+- Around the beginning of March, the curve starts to rise, then steepens markedly in the second half of March.
+- By late March, the total confirmed count per day is several hundred, giving the plot a characteristic exponential‑like shape.
+
+This line chart summarises the transition from sporadic early cases to a rapidly growing outbreak in March 2020, consistent with broader timelines of COVID‑19 spread in India.
 
 ## Additional R practice (Week 2 context)
 
